@@ -9,7 +9,7 @@
 import UIKit
 
 
-protocol TableViewCellController {
+public protocol TableViewCellController {
     static var reuseIdentifier: String { get }
     static var cellClass: UITableViewCell.Type { get }
     static var cellNib: UINib? { get }
@@ -21,7 +21,7 @@ protocol TableViewCellController {
 
 }
 
-extension TableViewCellController {
+public extension TableViewCellController {
     static func registerCell(tableView: UITableView) {
         if let nib = cellNib {
             tableView.register(nib, forCellReuseIdentifier: reuseIdentifier)

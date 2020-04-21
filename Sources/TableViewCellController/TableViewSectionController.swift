@@ -9,8 +9,10 @@
 import UIKit
 
 
-class TableViewSectionController {
-    var cellControllers = [TableViewCellController]()
+public class TableViewSectionController {
+    public var cellControllers = [TableViewCellController]()
 
-    var sectionTitle = ""
+    public var sectionTitle: String? {
+        return nil
+    }
 }

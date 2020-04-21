@@ -9,9 +9,9 @@
 import UIKit
 
 
-class TableViewDataSource: NSObject, UITableViewDataSource, UITableViewDelegate {
+public class TableViewDataSource: NSObject, UITableViewDataSource, UITableViewDelegate {
 
-    var tableView: UITableView? {
+    public var tableView: UITableView? {
         didSet {
             tableView?.dataSource = self
             tableView?.delegate = self
@@ -20,7 +20,7 @@ class TableViewDataSource: NSObject, UITableViewDataSource, UITableViewDelegate 
         }
     }
 
-    var sectionControllers = [TableViewSectionController]() {
+    public var sectionControllers = [TableViewSectionController]() {
         didSet {
             registerCells()
             tableView?.reloadData()
@@ -29,15 +29,15 @@ class TableViewDataSource: NSObject, UITableViewDataSource, UITableViewDelegate 
 
     // MARK: UITableViewDataSource
 
-    func numberOfSections(in tableView: UITableView) -> Int {
+    public func numberOfSections(in tableView: UITableView) -> Int {
         return sectionControllers.count
     }
 
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return sectionControllers[section].cellControllers.count
     }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let controller = cellControllerAt(indexPath)
         let cell = tableView.dequeueReusableCell(withIdentifier: type(of: controller).reuseIdentifier, for: indexPath)
         controller.configureCell(cell)
@@ -48,20 +48,20 @@ class TableViewDataSource: NSObject, UITableViewDataSource, UITableViewDelegate 
 
     // MARK: UITableViewDelegate
 
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return cellControllerAt(indexPath).heightForWidth(width: tableView.frame.size.width)
     }
 
-    func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+    public func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         return cellControllerAt(indexPath).shouldHighlightCell()
     }
 
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let controller = cellControllerAt(indexPath)
         controller.cellSelected(tableView.cellForRow(at: indexPath)!)
     }
 
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    public func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return sectionControllers[section].sectionTitle
     }
     
