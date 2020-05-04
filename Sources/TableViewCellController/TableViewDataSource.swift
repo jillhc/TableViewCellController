@@ -21,6 +21,14 @@ public class TableViewDataSource: NSObject, UITableViewDataSource, UITableViewDe
     }
 
     public var sectionControllers = [TableViewSectionController]() {
+        willSet {
+            // Clean up old cells, since the tableView will call endDisplaying on the old indexPaths only upon reloadData(), at which point the newValue is stored
+            for sectionController in sectionControllers {
+                for cellController in sectionController.cellControllers {
+                    cellController.endDisplayingCell(nil)
+                }
+            }
+        }
         didSet {
             registerCells()
             tableView?.reloadData()
@@ -38,7 +46,7 @@ public class TableViewDataSource: NSObject, UITableViewDataSource, UITableViewDe
     }
 
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let controller = cellControllerAt(indexPath)
+        let controller = cellControllerAt(indexPath)! // Force unwrap because we are guaranteed to have a cell controller matching the indexPath here
         let cell = tableView.dequeueReusableCell(withIdentifier: type(of: controller).reuseIdentifier, for: indexPath)
         controller.configureCell(cell)
 
@@ -49,27 +57,41 @@ public class TableViewDataSource: NSObject, UITableViewDataSource, UITableViewDe
     // MARK: UITableViewDelegate
 
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return cellControllerAt(indexPath).heightForWidth(width: tableView.frame.size.width)
+        return cellControllerAt(indexPath)?.heightForWidth(width: tableView.frame.size.width) ?? 0
     }
 
     public func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        return cellControllerAt(indexPath).shouldHighlightCell()
+        return cellControllerAt(indexPath)?.shouldHighlightCell() ?? false
     }
 
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let controller = cellControllerAt(indexPath)
-        controller.cellSelected(tableView.cellForRow(at: indexPath)!)
+        cellControllerAt(indexPath)?.cellSelected(tableView.cellForRow(at: indexPath)!)
     }
 
     public func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return sectionControllers[section].sectionTitle
+        return (section < sectionControllers.count) ? sectionControllers[section].sectionTitle : nil
     }
-    
+
+    public func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cellControllerAt(indexPath)?.beginDisplayingCell(cell)
+    }
+
+    public func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cellControllerAt(indexPath)?.endDisplayingCell(cell)
+    }
+
 
     // MARK: Helpers
 
-    private func cellControllerAt(_ indexPath: IndexPath) -> TableViewCellController {
-        return sectionControllers[indexPath.section].cellControllers[indexPath.row]
+    private func cellControllerAt(_ indexPath: IndexPath) -> TableViewCellController? {
+        if indexPath.section < sectionControllers.count {
+            let sectionController = sectionControllers[indexPath.section]
+            if indexPath.row < sectionController.cellControllers.count {
+                return sectionController.cellControllers[indexPath.row];
+            }
+        }
+
+        return nil
     }
 
     private func registerCells() {

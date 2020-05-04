@@ -9,10 +9,20 @@
 import UIKit
 
 
-public class TableViewSectionController {
-    public var cellControllers = [TableViewCellController]()
+public protocol TableViewSectionController {
+    var cellControllers: [TableViewCellController] { get }
 
-    public var sectionTitle: String? {
-        return nil
+    var sectionTitle: String? { get }
+}
+
+
+/// A concrete implementaiton of the protocol that simply stores cellControllers and a sectionTitle
+public class SimpleTableViewSectionController: TableViewSectionController {
+    public let cellControllers: [TableViewCellController]
+    public let sectionTitle: String?
+
+    public init(cellControllers: [TableViewCellController], sectionTitle: String?) {
+        self.cellControllers = cellControllers
+        self.sectionTitle = sectionTitle
     }
 }

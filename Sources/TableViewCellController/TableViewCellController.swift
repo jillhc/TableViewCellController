@@ -10,15 +10,32 @@ import UIKit
 
 
 public protocol TableViewCellController {
+
+    /// Default implementation returns cellClass name
     static var reuseIdentifier: String { get }
+
+    /// Must be overridden
     static var cellClass: UITableViewCell.Type { get }
+
+    /// Default implementation returns a nib if the cellClass conforms to NibBacked
     static var cellNib: UINib? { get }
 
+    /// Must be overridden
     func heightForWidth(width: CGFloat) -> CGFloat
+    /// Must be overridden
     func configureCell(_ cell: UITableViewCell)
-    func cellSelected(_ cell: UITableViewCell)
+
+    /// Default implementation returns false
     func shouldHighlightCell() -> Bool
 
+    /// Default implementation does nothing
+    func cellSelected(_ cell: UITableViewCell)
+
+    /// Default implementation does nothing
+    func beginDisplayingCell(_ cell: UITableViewCell)
+
+    /// Default implementation does nothing
+    func endDisplayingCell(_ cell: UITableViewCell?)
 }
 
 public extension TableViewCellController {
@@ -35,8 +52,10 @@ public extension TableViewCellController {
     }
 
     func shouldHighlightCell() -> Bool {
-        return true
+        return false
     }
 
-    static var cellClass: UITableViewCell.Type { return UITableViewCell.self }
+    func cellSelected(_ cell: UITableViewCell) {}
+    func beginDisplayingCell(_ cell: UITableViewCell) {}
+    func endDisplayingCell(_ cell: UITableViewCell?) {}
 }
