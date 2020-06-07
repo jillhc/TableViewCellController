@@ -6,6 +6,8 @@
 //  Copyright © 2016 Jill Cohen. All rights reserved.
 //
 
+#if !os(macOS)
+
 import UIKit
 
 
@@ -68,8 +70,12 @@ public class TableViewDataSource: NSObject, UITableViewDataSource, UITableViewDe
         cellControllerAt(indexPath)?.cellSelected(tableView.cellForRow(at: indexPath)!)
     }
 
-    public func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return (section < sectionControllers.count) ? sectionControllers[section].sectionTitle : nil
+    public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        return (section < sectionControllers.count) ? sectionControllers[section].viewForHeader() : nil
+    }
+
+    public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return (section < sectionControllers.count) ? sectionControllers[section].heightForHeader() : 0
     }
 
     public func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -107,3 +113,5 @@ public class TableViewDataSource: NSObject, UITableViewDataSource, UITableViewDe
     }
 
 }
+
+#endif

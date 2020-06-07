@@ -6,6 +6,8 @@
 //  Copyright © 2016 Jill Cohen. All rights reserved.
 //
 
+#if !os(macOS)
+
 import UIKit
 
 
@@ -59,3 +61,5 @@ public extension TableViewCellController {
     func beginDisplayingCell(_ cell: UITableViewCell) {}
     func endDisplayingCell(_ cell: UITableViewCell?) {}
 }
+
+#endif
